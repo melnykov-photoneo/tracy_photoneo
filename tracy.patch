@@ -1,0 +1,63 @@
+diff --git a/python/CMakeLists.txt b/python/CMakeLists.txt
+index a4a8978e..2ff0208e 100644
+--- a/python/CMakeLists.txt
++++ b/python/CMakeLists.txt
+@@ -3,11 +3,11 @@ set(CMAKE_CXX_STANDARD 20)
+ option(EXTERNAL_PYBIND11 "Whether to download pybind11" ON)
+ 
+ if(EXTERNAL_PYBIND11)
+-    find_package(Python 3.6 COMPONENTS Interpreter Development REQUIRED)
++	find_package(Python 2.7 EXACT COMPONENTS Interpreter Development REQUIRED)
+ 
+     include(FetchContent)
+ 
+-    FetchContent_Declare(pybind11 GIT_REPOSITORY "https://github.com/pybind/pybind11.git" GIT_TAG "v2.11.1" GIT_SHALLOW ON TEST_BEFORE_INSTALL ON)
++    FetchContent_Declare(pybind11 GIT_REPOSITORY "https://github.com/pybind/pybind11.git" GIT_TAG "v2.9" GIT_SHALLOW ON TEST_BEFORE_INSTALL ON)
+     FetchContent_MakeAvailable(pybind11)
+ endif()
+ 
+diff --git a/python/setup.py b/python/setup.py
+index 07d568ad..4f48a77d 100644
+--- a/python/setup.py
++++ b/python/setup.py
+@@ -4,25 +4,24 @@ import glob
+ import os
+ import shutil
+ 
+-from typing import List
+ 
+-from setuptools import setup, find_namespace_packages, Extension
++from setuptools import setup, Extension
+ from setuptools.command.build_ext import build_ext
+ 
+ MODULE_NAME = "tracy_client"
+ 
+ 
+-def find_files(pattern: str) -> List[str]:
+-    return glob.glob(os.path.join(MODULE_NAME, pattern), recursive=True)
++def find_files(pattern):
++    return glob.glob(os.path.join(MODULE_NAME, pattern))
+ 
+ 
+-class ManualExtension(Extension):
+-    def __init__(self) -> None:
+-        super().__init__(name=MODULE_NAME, sources=[])
++class ManualExtension(Extension, object):
++    def __init__(self):
++        super(ManualExtension, self).__init__(name=MODULE_NAME, sources=[])
+ 
+ 
+ class DummyBuild(build_ext):
+-    def build_extension(self, ext) -> None:
++    def build_extension(self, ext):
+         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
+         extdir = os.path.join(extdir, MODULE_NAME)
+ 
+@@ -44,7 +43,6 @@ setup(
+     ext_modules=[ManualExtension()],
+     cmdclass={"build_ext": DummyBuild},
+     package_dir={"": "."},
+-    packages=find_namespace_packages(where="."),
+     package_data={"": ["py.typed"]},
+     data_files=[
+         ("lib", find_files("lib*")),
