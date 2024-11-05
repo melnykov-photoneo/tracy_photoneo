@@ -5,7 +5,7 @@ import os
 import shutil
 
 
-from setuptools import setup, Extension
+from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 
 MODULE_NAME = "tracy_client"
@@ -43,6 +43,7 @@ setup(
     ext_modules=[ManualExtension()],
     cmdclass={"build_ext": DummyBuild},
     package_dir={"": "."},
+    packages=find_packages(where="."),
     package_data={"": ["py.typed"]},
     data_files=[
         ("lib", find_files("lib*")),
