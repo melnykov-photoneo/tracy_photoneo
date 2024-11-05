@@ -3,11 +3,11 @@ set(CMAKE_CXX_STANDARD 20)
 option(EXTERNAL_PYBIND11 "Whether to download pybind11" ON)
 
 if(EXTERNAL_PYBIND11)
-    find_package(Python 3.6 COMPONENTS Interpreter Development REQUIRED)
+	find_package(Python 2.7 EXACT COMPONENTS Interpreter Development REQUIRED)
 
     include(FetchContent)
 
-    FetchContent_Declare(pybind11 GIT_REPOSITORY "https://github.com/pybind/pybind11.git" GIT_TAG "v2.11.1" GIT_SHALLOW ON TEST_BEFORE_INSTALL ON)
+    FetchContent_Declare(pybind11 GIT_REPOSITORY "https://github.com/pybind/pybind11.git" GIT_TAG "v2.9" GIT_SHALLOW ON TEST_BEFORE_INSTALL ON)
     FetchContent_MakeAvailable(pybind11)
 endif()
 
